@@ -8,7 +8,7 @@ const Header = () => {
       colors={['#19A7CE', '#146C94']}
       style={styles.header}
     >
-      <Text style={styles.title}>🌊 Aqua Shield</Text>
+      <Text style={styles.title}>Smart HealthCare</Text>
     </LinearGradient>
   );
 };
