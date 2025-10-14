@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { Text, StyleSheet, ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import Layout from "../components/layout/layout";
+import ReportFilter from "../components/staffReport/ReportFilter";
 
 export default function PatientReport({ route }) {
-  const navigation = useNavigation();
+  const [filters, setFilters] = useState({});
 
   return (
     <Layout title="Reports and Analytics">
-    <ScrollView
-      contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
-    >
-      <Text>Recordss...</Text>     
-    </ScrollView>
+      <ScrollView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+        <ReportFilter onFilterChange={(f) => setFilters(f)} />
+
+        {/* <LineChartCard title="Daily/Monthly Patient Visits" filters={filters} /> */}
+        {/* <BarChartCard title="Department-wise Service Usage" filters={filters} /> */}
+        {/* <PieChartCard title="Revenue by Payment Method" filters={filters} /> */}
+        {/* <HeatmapChartCard title="Hospital Occupancy Trends" filters={filters} /> */}
+        {/* <ReportSummaryCard title="Top 5 Departments by Visits" filters={filters} /> */}
+      </ScrollView>
     </Layout>
   );
 }
