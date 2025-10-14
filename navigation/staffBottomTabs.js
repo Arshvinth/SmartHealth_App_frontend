@@ -8,6 +8,7 @@ import ScanQr from '../screens/scanQR';
 import PatientReport from '../screens/patientReport'; 
 import EditPatientRecord from '../screens/EditPatientRecord'; 
 import staffProfile from '../screens/staffProfile'; 
+import StaffRecordScreen from '../screens/staffRecordScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -115,7 +116,7 @@ export default function BottomTabs() {
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen name="Scan" component={ScanStack} />
-      <Tab.Screen name="Reports" children={() => <DummyScreen title="Reports" />} />
+      <Tab.Screen name="Reports" component={StaffRecordScreen} />
       <Tab.Screen name="Profile" component={staffProfile} />
     </Tab.Navigator>
   );
