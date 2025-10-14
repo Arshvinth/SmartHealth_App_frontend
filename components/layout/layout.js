@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.md,
   },
   scrollContent: {
-    paddingBottom: height * 0.12, // keeps bottom space relative to screen
+    paddingBottom: height * 0.18, // keeps bottom space relative to screen
   },
 });
 
