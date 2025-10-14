@@ -1,23 +1,35 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from './header';
-import Footer from './footer';
+import { theme } from '../../theme';
+
+const { width, height } = Dimensions.get('window');
 
 const Layout = ({ title, children }) => {
   return (
-    <SafeAreaView style={styles.safeArea}  edges={[ 'left', 'right']}>
+    <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'top']}>
       <View style={styles.container}>
-        {/* Title below header */}
-        {title && <Text style={styles.title}>{title}</Text>}
+        {/* Optional Header Placeholder */}
+        {/* <Header /> */}
 
-        <ScrollView 
+        {/* Title Section */}
+        {title && (
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{title}</Text>
+          </View>
+        )}
+
+        {/* Scrollable Content */}
+        <ScrollView
           style={styles.content}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator={false}
         >
           {children}
         </ScrollView>
+
+        {/* Optional Footer Placeholder */}
+        {/* <Footer /> */}
       </View>
     </SafeAreaView>
   );
@@ -26,26 +38,36 @@ const Layout = ({ title, children }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F6F1F1',
+    backgroundColor: theme.colors.background,
   },
   container: {
     flex: 1,
+    width: width, // ensures layout stretches full width
+    minHeight: height,
+  },
+  titleContainer: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderBottomColor: theme.colors.border,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    shadowColor: theme.colors.shadow,
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#146C94',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    ...theme.typography.h1,
+    color: theme.colors.primary,
   },
   content: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: height * 0.12, // keeps bottom space relative to screen
   },
 });
 
- 
 export default Layout;
