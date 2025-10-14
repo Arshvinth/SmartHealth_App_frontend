@@ -8,7 +8,7 @@ import ScanQr from '../screens/scanQR';
 import PatientReport from '../screens/patientReport'; 
 import EditPatientRecord from '../screens/EditPatientRecord'; 
 import staffProfile from '../screens/staffProfile'; 
-import StaffRecordScreen from '../screens/staffRecordScreen';
+import StaffRecordScreen from '../screens/staffReportScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
