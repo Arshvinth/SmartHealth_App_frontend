@@ -6,7 +6,7 @@ import { theme } from "../../theme";
 const cardHorizontalMargin = theme.spacing.md * 2;
 const cardPadding = theme.spacing.md * 2;
 const screenWidth = Dimensions.get("window").width - cardHorizontalMargin;
-const chartWidth = screenWidth - cardPadding;
+const chartWidth = screenWidth - cardPadding * 2;
 
 const LineChartCard = ({ title, filters }) => {
   // Demo data — later you’ll replace this with data fetched based on filters
