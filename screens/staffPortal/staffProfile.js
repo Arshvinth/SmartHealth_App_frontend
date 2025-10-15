@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 
-export default function StaffProfile() {
+export default function StaffProfile({ route }) {
   // Dummy staff data
   const staffData = {
     name: "Alice Johnson",

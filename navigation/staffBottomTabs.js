@@ -166,6 +166,7 @@
 //   },
 // });
 
+/////========================================================
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -175,8 +176,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScanQr from '../screens/staffPortal/scanQR'; 
 import PatientReport from '../screens/staffPortal/patientReport'; 
 import AddPatientRecord from '../screens/staffPortal/addPatientRecord'; 
-import staffProfile from '../screens/staffPortal/staffProfile'; 
+import StaffProfile from '../screens/staffPortal/staffProfile'; 
 import UpdateVitals from '../screens/staffPortal/updateVitals';
+import PatientMedicalRecords from '../screens/staffPortal/patientAllReports';
+import patientAllMedicalRecords from '../screens/staffPortal/patientAllReports';
 import { theme } from '../theme'; // <-- import theme
 
 const Tab = createBottomTabNavigator();
@@ -232,8 +235,18 @@ function ScanStack() {
       />
       <Stack.Screen
         name="staffProfile"
-        component={staffProfile}
+        component={StaffProfile}
         options={{ headerTitle: 'Staff Profile', headerTitleAlign: 'center' }}
+      />
+      <Stack.Screen
+        name="patientMedicalRecords"
+        component={PatientMedicalRecords}
+        options={{ headerTitle: 'Past Medical Records', headerTitleAlign: 'center' }}
+      />
+      <Stack.Screen
+        name="patientAllMedicalRecords"
+        component={patientAllMedicalRecords}
+        options={{ headerTitle: 'Past Reports', headerTitleAlign: 'center' }}
       />
     </Stack.Navigator>
   );
@@ -293,8 +306,7 @@ export default function BottomTabs() {
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen name="Scan" component={ScanStack} />
-      <Tab.Screen name="Reports" children={() => <DummyScreen title="Reports" />} />
-      <Tab.Screen name="Profile" component={staffProfile} />
+      <Tab.Screen name="Profile" component={StaffProfile} options={{ headerShown: true}}  />
     </Tab.Navigator>
   );
 }

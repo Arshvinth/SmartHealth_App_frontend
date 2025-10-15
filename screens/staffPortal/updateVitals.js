@@ -1,77 +1,128 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { theme } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
-import { theme } from "../../theme"; // Import your theme
-import { dummyData } from "./patientReport"; // Make sure dummyData is exported
+import { API_BASE_URL } from "../../config"; // ensure this is imported
 
 export default function UpdateVitals({ route }) {
-  const navigation = useNavigation();
-  const { patient } = route.params;
+  const { patientName, record } = route.params;
 
-  const data = dummyData[patient.id];
+  // Safely get vitals from the record
+  const initialVitals = record?.vitals?.[0] || {};
+  const navigation = useNavigation();
 
   const [vitals, setVitals] = useState({
-    bp: data?.vitals?.bp || "",
-    hr: data?.vitals?.hr?.toString() || "",
-    temp: data?.vitals?.temp || "",
+    bloodPressure: initialVitals.bloodPressure?.toString() || "",
+    heartRate: initialVitals.heartRate?.toString() || "",
+    temperature: initialVitals.temperature?.toString() || "",
+    weight: initialVitals.weight?.toString() || "",
+    height: initialVitals.height?.toString() || "",
   });
 
-  const handleChange = (key, value) => setVitals({ ...vitals, [key]: value });
+  console.log("Incoming vitals data:", initialVitals._id);
 
-  const handleSubmit = () => {
-    // Update dummyData vitals
-    dummyData[patient.id].vitals = {
-      bp: vitals.bp,
-      hr: Number(vitals.hr),
-      temp: vitals.temp,
-    };
+  const handleChange = (key, value) => {
+    setVitals((prev) => ({ ...prev, [key]: value }));
+  };
 
-    Alert.alert("Success", "Vitals updated successfully!", [
-      { text: "OK", onPress: () => navigation.goBack() },
-    ]);
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/vitals/updateVitals/${initialVitals._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(vitals),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update vitals");
+      }
+
+      Alert.alert(
+        "Success",
+        "Medical record added successfully!",
+        [{ text: "OK", onPress: () => navigation.goBack() }]
+      );
+      
+    } catch (err) {
+      console.error("Update failed:", err);
+      Alert.alert("Error", "Failed to update vitals.");
+    }
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ alignItems: "center", paddingBottom: theme.spacing.xl }}>
-      <Text style={styles.title}>Update Vitals for {patient.name}</Text>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
+      <View style={styles.card}>
+        <Text style={styles.header}>Update Vitals</Text>
+        <Text style={styles.subHeader}>Patient: {patientName}</Text>
 
-      {/* Blood Pressure */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Blood Pressure</Text>
-        <TextInput
-          style={styles.input}
-          value={vitals.bp}
-          onChangeText={(text) => handleChange("bp", text)}
-          placeholder="e.g., 120/80 mmHg"
-        />
+        {/* Blood Pressure */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Blood Pressure (mmHg)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 120/80"
+            value={vitals.bloodPressure}
+            onChangeText={(v) => handleChange("bloodPressure", v)}
+          />
+        </View>
+
+        {/* Heart Rate */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Heart Rate (bpm)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 75"
+            value={vitals.heartRate}
+            onChangeText={(v) => handleChange("heartRate", v)}
+          />
+        </View>
+
+        {/* Temperature */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Temperature (°F)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 98.6"
+            value={vitals.temperature}
+            onChangeText={(v) => handleChange("temperature", v)}
+          />
+        </View>
+
+        {/* Weight */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Weight (kg)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 70"
+            value={vitals.weight}
+            onChangeText={(v) => handleChange("weight", v)}
+          />
+        </View>
+
+        {/* Height */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Height (cm)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 175"
+            value={vitals.height}
+            onChangeText={(v) => handleChange("height", v)}
+          />
+        </View>
+
+        {/* Submit Button */}
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Update</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Heart Rate */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Heart Rate</Text>
-        <TextInput
-          style={styles.input}
-          value={vitals.hr}
-          onChangeText={(text) => handleChange("hr", text)}
-          keyboardType="numeric"
-          placeholder="e.g., 72"
-        />
-      </View>
-
-      {/* Temperature */}
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Temperature</Text>
-        <TextInput
-          style={styles.input}
-          value={vitals.temp}
-          onChangeText={(text) => handleChange("temp", text)}
-          placeholder="e.g., 98.6°F"
-        />
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Update Vitals</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -80,46 +131,58 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.background,
+    padding: 20,
   },
-  title: {
-    fontSize: theme.typography.h1.fontSize,
-    fontWeight: theme.typography.h1.fontWeight,
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: theme.colors.shadow,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: "bold",
     color: theme.colors.primary,
-    marginTop: theme.spacing.xl,
-    marginBottom: theme.spacing.lg,
+    marginBottom: 5,
     textAlign: "center",
   },
-  inputContainer: {
-    width: "90%",
-    marginBottom: theme.spacing.md,
+  subHeader: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  inputGroup: {
+    marginBottom: 15,
   },
   label: {
-    fontSize: theme.typography.body.fontSize,
+    fontSize: 14,
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.xs,
-    fontWeight: "600",
+    marginBottom: 5,
+    fontWeight: "500",
   },
   input: {
-    backgroundColor: theme.colors.surface,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-    fontSize: theme.typography.body.fontSize,
-    borderColor: theme.colors.border,
     borderWidth: 1,
+    borderColor: theme.colors.primary,
+    borderRadius: 8,
+    padding: 10,
+    color: theme.colors.textPrimary,
+    backgroundColor: theme.colors.background,
   },
   button: {
-    backgroundColor: theme.colors.secondary,
-    paddingVertical: theme.spacing.lg,
-    paddingHorizontal: theme.spacing.xl,
-    borderRadius: theme.radius.md,
-    marginTop: theme.spacing.lg,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 15,
+    borderRadius: 10,
+    marginTop: 10,
     alignItems: "center",
-    width: "75%",
-    alignSelf: "center",
   },
   buttonText: {
     color: theme.colors.surface,
-    fontSize: theme.typography.h2.fontSize,
-    fontWeight: theme.typography.h2.fontWeight,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
