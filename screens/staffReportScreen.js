@@ -4,6 +4,7 @@ import Layout from "../components/layout/layout";
 import ReportFilter from "../components/staffReport/ReportFilter";
 import LineChartCard from "../components/staffReport/LineChartCard";
 import BarChartCard from "../components/staffReport/BarChartCard";
+import PieChartCard from "../components/staffReport/PieChartCard";
 
 export default function PatientReport({ route }) {
   const [filters, setFilters] = useState({});
@@ -15,7 +16,7 @@ export default function PatientReport({ route }) {
 
         <LineChartCard title="Daily/Monthly Patient Visits" filters={filters} />
         <BarChartCard title="Department-wise Service Usage" filters={filters} />
-        {/* <PieChartCard title="Revenue by Payment Method" filters={filters} /> */}
+        <PieChartCard title="Revenue by Payment Method" filters={filters} />
         {/* <HeatmapChartCard title="Hospital Occupancy Trends" filters={filters} /> */}
         {/* <ReportSummaryCard title="Top 5 Departments by Visits" filters={filters} /> */}
       </ScrollView>
