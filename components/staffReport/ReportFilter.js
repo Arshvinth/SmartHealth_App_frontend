@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: theme.radius.lg,
     paddingVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.md,
     marginVertical: theme.spacing.sm,
     marginHorizontal: theme.spacing.md,
     shadowColor: theme.colors.shadow,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   picker: {
-    height: 48,
+    height: 49,
     color: theme.colors.textPrimary,
   },
 });
