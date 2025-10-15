@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { theme } from '../../theme';
 
@@ -54,15 +54,17 @@ const BarChartCard = ({ title, filters }) => {
         </View>
       )}
 
-      <BarChart
-        data={data}
-        width={chartWidth}
-        height={260}
-        chartConfig={chartConfig}
-        style={styles.chart}
-        fromZero
-        showValuesOnTopOfBars={false}
-      />
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <BarChart
+          data={data}
+          width={Math.max(chartWidth, data.labels.length * 80)} // adjust 80 as needed
+          height={260}
+          chartConfig={chartConfig}
+          style={styles.chart}
+          fromZero
+          showValuesOnTopOfBars={false}
+        />
+      </ScrollView>
     </View>
   );
 };
