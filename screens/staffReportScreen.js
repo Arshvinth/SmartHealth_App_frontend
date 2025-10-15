@@ -6,6 +6,7 @@ import LineChartCard from "../components/staffReport/LineChartCard";
 import BarChartCard from "../components/staffReport/BarChartCard";
 import PieChartCard from "../components/staffReport/PieChartCard";
 import HeatmapChartCard from "../components/staffReport/HeatmapChartCard";
+import ReportSummaryCard from "../components/staffReport/ReportSummaryCard";
 
 export default function PatientReport({ route }) {
   const [filters, setFilters] = useState({});
@@ -19,7 +20,7 @@ export default function PatientReport({ route }) {
         <BarChartCard title="Department-wise Service Usage" filters={filters} />
         <PieChartCard title="Revenue by Payment Method" filters={filters} />
         <HeatmapChartCard title="Hospital Occupancy Trends" filters={filters} />
-        {/* <ReportSummaryCard title="Top 5 Departments by Visits" filters={filters} /> */}
+        <ReportSummaryCard title="Top 5 Departments by Visits" filters={filters} />
       </ScrollView>
     </Layout>
   );
