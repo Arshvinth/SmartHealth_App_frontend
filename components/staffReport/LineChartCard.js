@@ -9,6 +9,12 @@ const screenWidth = Dimensions.get("window").width - cardHorizontalMargin;
 const chartWidth = screenWidth - cardPadding * 2;
 
 const LineChartCard = ({ title, filters }) => {
+  // Determine if any filter is applied (not default)
+  const isFilterApplied =
+    (filters.dateRange && filters.dateRange !== "This Month") ||
+    (filters.department && filters.department !== "All") ||
+    (filters.patientType && filters.patientType !== "All");
+
   // Demo data — later you’ll replace this with data fetched based on filters
   const data = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -41,6 +47,18 @@ const LineChartCard = ({ title, filters }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
+
+      {/* Show filter summary only if a filter is applied */}
+      {isFilterApplied && (
+        <View style={styles.filterSummary}>
+          <Text style={styles.filterText}>
+            {filters.dateRange || "This Month"} |{" "}
+            {filters.department || "All"} |{" "}
+            {filters.patientType || "All"}
+          </Text>
+        </View>
+      )}
+
       <LineChart
         data={data}
         width={chartWidth}
@@ -49,15 +67,6 @@ const LineChartCard = ({ title, filters }) => {
         bezier
         style={styles.chart}
       />
-
-      {/* Optional: show applied filters */}
-      <View style={styles.filterSummary}>
-        <Text style={styles.filterText}>
-          {filters.dateRange || "This Month"} | {" "}
-          {filters.department || "All"} | {" "}
-          {filters.patientType || "All"}
-        </Text>
-      </View>
     </View>
   );
 };

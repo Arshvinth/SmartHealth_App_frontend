@@ -8,6 +8,12 @@ const screenWidth = Dimensions.get("window").width - cardHorizontalMargin;
 const barMaxWidth = screenWidth - cardPadding * 3;
 
 const ReportSummaryCard = ({ title, filters }) => {
+  // Determine if any filter is applied (not default)
+  const isFilterApplied =
+    (filters.dateRange && filters.dateRange !== "This Month") ||
+    (filters.department && filters.department !== "All") ||
+    (filters.patientType && filters.patientType !== "All");
+
   // Demo data — later this can be fetched dynamically
   const departments = [
     { name: "Cardiology", visits: 320 },
@@ -23,14 +29,16 @@ const ReportSummaryCard = ({ title, filters }) => {
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
 
-      {/* Optional: show applied filters */}
-      <View style={styles.filterSummary}>
-        <Text style={styles.filterText}>
-          {filters.dateRange || "This Month"} |{" "}
-          {filters.department || "All"} |{" "}
-          {filters.patientType || "All"}
-        </Text>
-      </View>
+      {/* Show filter summary only if a filter is applied */}
+      {isFilterApplied && (
+        <View style={styles.filterSummary}>
+          <Text style={styles.filterText}>
+            {filters.dateRange || "This Month"} |{" "}
+            {filters.department || "All"} |{" "}
+            {filters.patientType || "All"}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.listContainer}>
         {departments.map((dept, index) => {

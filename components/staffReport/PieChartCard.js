@@ -9,6 +9,12 @@ const screenWidth = Dimensions.get("window").width - cardHorizontalMargin;
 const chartWidth = screenWidth - cardPadding * 2;
 
 const PieChartCard = ({ title, filters }) => {
+  // Determine if any filter is applied (not default)
+  const isFilterApplied =
+    (filters.dateRange && filters.dateRange !== "This Month") ||
+    (filters.department && filters.department !== "All") ||
+    (filters.patientType && filters.patientType !== "All");
+
   // Demo data — later you’ll replace this with data fetched based on filters
   const data = [
     {
@@ -44,6 +50,18 @@ const PieChartCard = ({ title, filters }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
+
+      {/* Show filter summary only if a filter is applied */}
+      {isFilterApplied && (
+        <View style={styles.filterSummary}>
+          <Text style={styles.filterText}>
+            {filters.dateRange || "This Month"} |{" "}
+            {filters.department || "All"} |{" "}
+            {filters.patientType || "All"}
+          </Text>
+        </View>
+      )}
+
       <PieChart
         data={data}
         width={chartWidth}
@@ -83,6 +101,18 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.md,
     alignSelf: "center",
   },
+  filterSummary: {
+    marginTop: theme.spacing.sm,
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.sm,
+    borderRadius: theme.radius.md,
+  },
+  filterText: {
+    ...theme.typography.small,
+    color: theme.colors.textSecondary,
+    textAlign: "center",
+  },
+
 });
 
 export default PieChartCard;
