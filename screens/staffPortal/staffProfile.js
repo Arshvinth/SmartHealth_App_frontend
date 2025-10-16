@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 
-export default function StaffProfile({ route }) {
+export default function StaffProfile({ route, navigation }) {
   // Dummy staff data
   const staffData = {
     name: "Alice Johnson",
@@ -12,9 +12,37 @@ export default function StaffProfile({ route }) {
     phone: "+94 77 123 4567",
   };
 
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to log out?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Logout",
+          onPress: () => {
+            // TODO: clear session / navigate to login screen
+            navigation.replace("Login");
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}>
-      <Text style={styles.nameText}>{staffData.name}</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
+    >
+      {/* Header with Logout */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.nameText}>{staffData.name}</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.idText}>Staff ID: {staffData.staffId}</Text>
 
       <View style={styles.card}>
@@ -34,8 +62,36 @@ export default function StaffProfile({ route }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F6F1F1" },
-  nameText: { fontSize: 26, fontWeight: "700", color: "#146C94", marginTop: 20 },
+
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "90%",
+    marginTop: 20,
+  },
+
+  nameText: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#146C94",
+  },
+
+  logoutButton: {
+    backgroundColor: "#E74C3C",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+
+  logoutText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
   idText: { fontSize: 18, color: "#333", marginBottom: 20 },
+
   card: {
     width: "90%",
     backgroundColor: "#fff",
@@ -48,6 +104,13 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
-  cardTitle: { fontSize: 18, fontWeight: "700", color: "#146C94", marginBottom: 8 },
+
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#146C94",
+    marginBottom: 8,
+  },
+
   detailText: { fontSize: 16, color: "#555", marginVertical: 2 },
 });

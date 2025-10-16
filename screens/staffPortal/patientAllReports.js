@@ -163,7 +163,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system/legacy"; // ✅ legacy import
+import * as FileSystem from "expo-file-system/legacy"; 
 import { theme } from "../../theme";
 import { API_BASE_URL } from "../../config";
 
@@ -285,15 +285,40 @@ export default function PatientReports({ route }) {
             text: "Save",
             onPress: async () => {
               try {
-                const fileName = `${patient.fullName.replace(/\s/g, "_")}_report.pdf`;
-                const fileUri = FileSystem.documentDirectory + fileName;
+                // ✅ SAF: Ask user for folder to save PDF
+                const permissions =
+                  await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-                await FileSystem.copyAsync({
-                  from: uri,
-                  to: fileUri,
+                if (!permissions.granted) {
+                  Alert.alert(
+                    "Permission Denied",
+                    "You need to select a folder to save the PDF."
+                  );
+                  return;
+                }
+
+                // Read file as Base64 and create new PDF file
+                const base64 = await FileSystem.readAsStringAsync(uri, {
+                  encoding: FileSystem.EncodingType.Base64,
                 });
 
-                Alert.alert("Saved", `PDF saved at: ${fileUri}`);
+                const fileName = `${patient.fullName.replace(
+                  /\s/g,
+                  "_"
+                )}_report.pdf`;
+
+                const newFileUri =
+                  await FileSystem.StorageAccessFramework.createFileAsync(
+                    permissions.directoryUri,
+                    fileName,
+                    "application/pdf"
+                  );
+
+                await FileSystem.writeAsStringAsync(newFileUri, base64, {
+                  encoding: FileSystem.EncodingType.Base64,
+                });
+
+                Alert.alert("Saved", "PDF successfully saved to selected folder.");
               } catch (err) {
                 console.error("Save failed:", err);
                 Alert.alert("Error", "Failed to save PDF.");
@@ -424,7 +449,7 @@ export default function PatientReports({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: theme.colors.background, padding: 15 },
+  container: { flex: 1, backgroundColor: theme.colors.background, padding: 10 },
   header: {
     fontSize: 22,
     fontWeight: "bold",
@@ -433,7 +458,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   card: {
-    width: "95%",
+    width: 300,
     backgroundColor: theme.colors.surface,
     borderRadius: 12,
     marginBottom: 15,
