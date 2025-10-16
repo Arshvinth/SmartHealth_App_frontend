@@ -1,16 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 
-export default function StaffProfile({ route, navigation }) {
-  // Dummy staff data
-  const staffData = {
-    name: "Alice Johnson",
-    staffId: "S12345",
-    role: "Nurse",
-    department: "Cardiology",
-    email: "alice.johnson@hospital.com",
-    phone: "+94 77 123 4567",
-  };
+export default function StaffProfile({ staff, navigation }) {
+  if (!staff) return null; 
 
   const handleLogout = () => {
     Alert.alert(
@@ -20,10 +12,7 @@ export default function StaffProfile({ route, navigation }) {
         { text: "Cancel", style: "cancel" },
         {
           text: "Logout",
-          onPress: () => {
-            // TODO: clear session / navigate to login screen
-            navigation.replace("Login");
-          },
+          onPress: () => navigation.replace("loginScreen"),
           style: "destructive",
         },
       ]
@@ -35,30 +24,30 @@ export default function StaffProfile({ route, navigation }) {
       style={styles.container}
       contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
     >
-      {/* Header with Logout */}
       <View style={styles.headerContainer}>
-        <Text style={styles.nameText}>{staffData.name}</Text>
+        <Text style={styles.nameText}>{staff.fullName}</Text>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.idText}>Staff ID: {staffData.staffId}</Text>
+      <Text style={styles.idText}>Staff ID: {staff.staffId}</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Role & Department</Text>
-        <Text style={styles.detailText}>Role: {staffData.role}</Text>
-        <Text style={styles.detailText}>Department: {staffData.department}</Text>
+        <Text style={styles.detailText}>Role: {staff.role}</Text>
+        <Text style={styles.detailText}>Department: {staff.department}</Text>
       </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Contact Info</Text>
-        <Text style={styles.detailText}>Email: {staffData.email}</Text>
-        <Text style={styles.detailText}>Phone: {staffData.phone}</Text>
+        <Text style={styles.detailText}>Email: {staff.email}</Text>
+        <Text style={styles.detailText}>Phone: {staff.phone}</Text>
       </View>
     </ScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F6F1F1" },
