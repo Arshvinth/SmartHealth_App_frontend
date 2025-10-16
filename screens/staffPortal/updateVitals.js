@@ -1,0 +1,257 @@
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { theme } from "../../theme";
+import { useNavigation } from "@react-navigation/native";
+import { API_BASE_URL } from "../../config";
+
+export default function UpdateVitals({ route }) {
+  const { patientName, record } = route.params;
+  const initialVitals = record?.vitals?.[0] || {};
+  const navigation = useNavigation();
+
+  const [vitals, setVitals] = useState({
+    bloodPressure: initialVitals.bloodPressure?.toString() || "",
+    heartRate: initialVitals.heartRate?.toString() || "",
+    temperature: initialVitals.temperature?.toString() || "",
+    weight: initialVitals.weight?.toString() || "",
+    height: initialVitals.height?.toString() || "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (key, value) => {
+    setVitals((prev) => ({ ...prev, [key]: value }));
+    validateField(key, value);
+  };
+
+  const validateField = (key, value) => {
+    let errorMsg = "";
+
+    switch (key) {
+      case "bloodPressure":
+        if (value && !/^\d{2,3}\/\d{2,3}$/.test(value))
+          errorMsg = "Format must be systolic/diastolic e.g. 120/80";
+        break;
+      case "heartRate":
+        if (
+          value &&
+          (!/^\d+$/.test(value) || parseInt(value) < 30 || parseInt(value) > 220)
+        )
+          errorMsg = "Heart rate must be between 30-220 BPM";
+        break;
+      case "temperature":
+        if (
+          value &&
+          (isNaN(value) || parseFloat(value) < 30 || parseFloat(value) > 45)
+        )
+          errorMsg = "Temperature must be between 30-45 °C";
+        break;
+      case "weight":
+        if (
+          value &&
+          (isNaN(value) || parseFloat(value) <= 0 || parseFloat(value) > 500)
+        )
+          errorMsg = "Weight must be a positive number up to 500 kg";
+        break;
+      case "height":
+        if (
+          value &&
+          (isNaN(value) || parseFloat(value) <= 0 || parseFloat(value) > 300)
+        )
+          errorMsg = "Height must be a positive number up to 300 cm";
+        break;
+      default:
+        break;
+    }
+
+    setErrors((prev) => ({ ...prev, [key]: errorMsg }));
+  };
+
+  const validateForm = () => {
+    Object.keys(vitals).forEach((key) => validateField(key, vitals[key]));
+    return Object.values(errors).every((e) => !e);
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      Alert.alert("Error", "Please fix validation errors before submitting.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/vitals/updateVitals/${initialVitals._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(vitals),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update vitals");
+
+      Alert.alert("Success", "Vitals updated successfully!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+    } catch (err) {
+      console.error("Update failed:", err);
+      Alert.alert("Error", "Failed to update vitals.");
+    }
+  };
+
+  const renderError = (key) => {
+    if (errors[key]) return <Text style={styles.errorText}>{errors[key]}</Text>;
+    return null;
+  };
+
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 30 }}>
+      <View style={styles.card}>
+        <Text style={styles.header}>Update Vitals</Text>
+        <Text style={styles.subHeader}>Patient: {patientName}</Text>
+
+        {/* Blood Pressure */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Blood Pressure (mmHg)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 120/80"
+            value={vitals.bloodPressure}
+            onChangeText={(v) => handleChange("bloodPressure", v)}
+          />
+          {renderError("bloodPressure")}
+        </View>
+
+        {/* Heart Rate */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Heart Rate (bpm)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 75"
+            value={vitals.heartRate}
+            onChangeText={(v) => handleChange("heartRate", v)}
+            keyboardType="numeric"
+          />
+          {renderError("heartRate")}
+        </View>
+
+        {/* Temperature */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Temperature (°C)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 36.8"
+            value={vitals.temperature}
+            onChangeText={(v) => handleChange("temperature", v)}
+            keyboardType="numeric"
+          />
+          {renderError("temperature")}
+        </View>
+
+        {/* Weight */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Weight (kg)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 70"
+            value={vitals.weight}
+            onChangeText={(v) => handleChange("weight", v)}
+            keyboardType="numeric"
+          />
+          {renderError("weight")}
+        </View>
+
+        {/* Height */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Height (cm)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="e.g. 175"
+            value={vitals.height}
+            onChangeText={(v) => handleChange("height", v)}
+            keyboardType="numeric"
+          />
+          {renderError("height")}
+        </View>
+
+        {/* Submit Button */}
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Update</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    padding: 20,
+  },
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: theme.colors.shadow,
+    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  header: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: theme.colors.primary,
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  subHeader: {
+    fontSize: 16,
+    color: theme.colors.textSecondary,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  inputGroup: {
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 14,
+    color: theme.colors.textPrimary,
+    marginBottom: 5,
+    fontWeight: "500",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+    borderRadius: 8,
+    padding: 10,
+    color: theme.colors.textPrimary,
+    backgroundColor: theme.colors.background,
+  },
+  button: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: 15,
+    borderRadius: 10,
+    marginTop: 10,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: theme.colors.surface,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  errorText: {
+    color: "red",
+    marginTop: 4,
+    fontSize: 12,
+  },
+});
