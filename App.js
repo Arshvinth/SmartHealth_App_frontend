@@ -37,13 +37,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        
+
         <Stack.Screen
           name="PatientBottomTabs"
           component={PatientBottomTabs}
           options={{ headerShown: false }}
         />
-        
+
       </Stack.Navigator>
     </NavigationContainer>
   );
