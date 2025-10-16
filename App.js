@@ -6,7 +6,8 @@ import * as Font from 'expo-font';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 import PatientBottomTabs from './navigation/patientBottomTabs';
-
+import staffBottomTabs from './navigation/staffBottomTabs';
+import loginScreen from './screens/loginPortal/loginPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +38,16 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        
+        <Stack.Screen
+          name="loginScreen"
+          component={loginScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="staffBottomTabs"
+          component={staffBottomTabs}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="PatientBottomTabs"
           component={PatientBottomTabs}
