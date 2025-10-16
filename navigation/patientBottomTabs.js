@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ManageAppointmentScreen from '../screen/appointment/ManageAppointment';
+import AppointmentStackNavigator from './AppointmentStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -59,7 +61,7 @@ export default function BottomTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         headerTitleAlign: 'center',
         headerTitleStyle: {
           fontSize: 20,
@@ -71,7 +73,7 @@ export default function BottomTabs() {
     >
       <Tab.Screen name="Home" children={() => <DummyScreen title="Home" />} />
       <Tab.Screen name="Records" children={() => <DummyScreen title="Records" />} />
-      <Tab.Screen name="Appointments" children={() => <DummyScreen title="Appointments" />} />
+      <Tab.Screen name="Appointments" component={AppointmentStackNavigator} />
       <Tab.Screen name="Profile" children={() => <DummyScreen title="Profile" />} />
     </Tab.Navigator>
   );
