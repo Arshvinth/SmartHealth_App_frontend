@@ -38,6 +38,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+
         <Stack.Screen
           name="loginScreen"
           component={loginScreen}
@@ -53,7 +54,7 @@ export default function App() {
           component={PatientBottomTabs}
           options={{ headerShown: false }}
         />
-        
+
       </Stack.Navigator>
     </NavigationContainer>
   );
