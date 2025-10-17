@@ -7,7 +7,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import colors from "../theme";
+import colors from "../theme.js";
 
 export default function WelcomeScreen({ navigation }) {
   return (
