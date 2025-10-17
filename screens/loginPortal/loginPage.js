@@ -11,6 +11,7 @@ import {
     Image
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons'; // 
 import { theme } from '../../theme';
 import { API_BASE_URL } from '../../config';
 
@@ -47,7 +48,7 @@ const LoginScreen = () => {
                     navigation.replace('staffBottomTabs', { staff: data.staff });
                 } else if (role === 'manager') {
                     Alert.alert('Success', 'Login successful! Redirecting to Home...');
-                    navigation.replace('loginScreen'); // Manager bottom tabs page
+                    navigation.replace('staffReportScreen'); 
                 }
             } else {
                 Alert.alert('Failed', data.message || 'Invalid username or password.');
@@ -63,6 +64,14 @@ const LoginScreen = () => {
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
+            {/* Back Arrow */}
+            <TouchableOpacity 
+                style={styles.backButton} 
+                onPress={() => navigation.navigate('Welcome')}
+            >
+                <Ionicons name="arrow-back" size={28} color={theme.colors.primary} />
+            </TouchableOpacity>
+
             <View style={styles.card}>
                 <Text style={styles.title}>Welcome Back</Text>
                 {error ? <Text style={styles.error}>{error}</Text> : null}
@@ -91,9 +100,10 @@ const LoginScreen = () => {
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
+
             {/* Logo */}
             <Image
-                source={require('../../assets/AppImages/SmartHealthLogo2.png')} // replace with your logo path
+                source={require('../../assets/AppImages/SmartHealthLogo2.png')}
                 style={styles.logo}
                 resizeMode="contain"
             />
@@ -111,11 +121,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: theme.spacing.lg,
     },
+    backButton: {
+        position: 'absolute',
+        top: 50,
+        left: 20,
+        zIndex: 10,
+        backgroundColor: 'transparent',
+    },
     logo: {
         width: 120,
         height: 120,
         marginTop: 30,
-        borderRadius:50
+        borderRadius: 50,
     },
     card: {
         backgroundColor: theme.colors.surface,

@@ -7,6 +7,7 @@ import ManageAppointmentScreen from '../screens/appointment/ManageAppointment';
 import AppointmentStackNavigator from './AppointmentStackNavigator';
 import HomeScreen from '../screens/appointment/HomeScreen';
 import AppointmentsListScreen from '../screens/appointment/ViewAppointmentsScreen';
+import AppointmentProfile from '../screens/appointment/appointmentProfile';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +77,7 @@ export default function BottomTabs() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Records" component={AppointmentsListScreen} />
       <Tab.Screen name="Appointments" component={AppointmentStackNavigator} />
-      <Tab.Screen name="Profile" children={() => <DummyScreen title="Profile" />} />
+      <Tab.Screen name="Profile" component={AppointmentProfile} />
     </Tab.Navigator>
   );
 }
