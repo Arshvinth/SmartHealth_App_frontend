@@ -83,7 +83,7 @@ export default function SuccessScreen({ route, navigation }) {
         {/* Success Message */}
         <View style={styles.successBox}>
           <Image
-            source={require("../assets/success.png")}
+            source={require("../assets/healthcare.jpeg")}
             style={styles.image}
           />
           <Text style={styles.title}>Account Created!</Text>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  image: { width: 100, height: 100, marginBottom: 16 },
+  image: { width: 100, height: 100, marginBottom: 16, borderRadius:50 },
   title: {
     fontSize: 24,
     fontWeight: "700",
