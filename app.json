@@ -7,18 +7,22 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "This app needs access to the camera to upload species images",
-        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to upload species images"
+        "NSCameraUsageDescription": "This app needs access to the camera for scanning health QR codes and uploading patient images.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save and share digital health cards.",
+        "NSPhotoLibraryAddUsageDescription": "This app saves your generated digital health cards to your photo library."
       }
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -28,15 +32,26 @@
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ]
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
+      ],
+      "package": "com.smarthealth.mobileapp"
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     },
+
     "plugins": [
       "expo-font",
-      "expo-speech-recognition"
+      "expo-speech-recognition",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow SmartHealth to save and access your digital health cards."
+        }
+      ]
     ]
   }
 }

@@ -28,7 +28,6 @@ const colors = {
   shadow: 'rgba(0, 0, 0, 0.1)', 
 }; 
  
-
 const typography = { 
   fontFamily: 'System', // or your preferred Google Font 
   h1: { fontSize: 28, fontWeight: '700', color: colors.textPrimary }, 
@@ -61,3 +60,5 @@ export const theme = {
   spacing, 
   radius, 
 };
+
+export default colors;
