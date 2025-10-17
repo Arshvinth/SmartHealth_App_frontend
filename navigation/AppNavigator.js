@@ -10,6 +10,7 @@ import SuccessScreen from '../screens/SuccessScreen';
 import PatientBottomTabs from '../navigation/patientBottomTabs';
 import staffBottomTabs from '../navigation/staffBottomTabs';
 import loginScreen from '../screens/loginPortal/loginPage';
+import MedicalCard from '../screens/MedicalRecordCard';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ export default function AppNavigator() {
         <Stack.Screen name="MedicalHistory" component={MedicalHistoryScreen} />
         <Stack.Screen name="ReviewSubmit" component={ReviewSubmitScreen} />
         <Stack.Screen name="Success" component={SuccessScreen} />
+        <Stack.Screen name="MedicalCard" component={MedicalCard} />
         <Stack.Screen
           name="loginScreen"
           component={loginScreen}

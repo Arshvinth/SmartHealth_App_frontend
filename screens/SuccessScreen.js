@@ -21,20 +21,22 @@ export default function SuccessScreen({ route, navigation }) {
 
   const formattedDob = patient.dob?.split("T")[0] || patient.dob;
 
-  // const qrData = JSON.stringify({
-  //   title: "Patient Details",
-  //   patientId: patient.patientId,
-  //   fullName: patient.fullName,
-  //   dob: formattedDob,
-  //   sex: patient.sex,
-  //   phone: patient.phone,
-  //   email: patient.email,
-  //   address: patient.address,
-  //   emergencyContact: patient.emergencyContact,
-  //   medicalHistory: patient.medicalHistory
-  // });
+  // ✅ Full Patient Data QR
+  const qrData = JSON.stringify({
+    title: "Patient Details",
+    patientId: patient.patientId,
+    fullName: patient.fullName,
+    dob: formattedDob,
+    sex: patient.sex,
+    phone: patient.phone,
+    email: patient.email,
+    address: patient.address,
+    emergencyContact: patient.emergencyContact,
+    medicalHistory: patient.medicalHistory,
+  });
 
-  const qrData = patient.card.qr;
+  // ✅ ID-only QR
+  const qrDataID = patient.card.qr;
 
   // ✅ Generate and Share PDF
   const handleSharePDF = async () => {
@@ -63,8 +65,20 @@ export default function SuccessScreen({ route, navigation }) {
     }
   };
 
+  // ✅ Navigate to Medical Record Card page
+  const handleOpenMedicalRecordCard = () => {
+    navigation.navigate("MedicalCard", { qrDataID });
+  };
+
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Success</Text>
+        <TouchableOpacity onPress={handleOpenMedicalRecordCard}>
+          <Text style={styles.headerButton}>Medical Record Card →</Text>
+        </TouchableOpacity>
+      </View>
+
       <View style={styles.content}>
         {/* ✅ Success Message */}
         <View style={styles.successBox}>
@@ -111,8 +125,21 @@ export default function SuccessScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    marginTop: 50
+  },
+  headerTitle: { fontSize: 22, fontWeight: "700", color: colors.primary },
+  headerButton: {
+    color: colors.info,
+    fontWeight: "600",
+    fontSize: 16,
+  },
   content: { padding: 20, alignItems: "center" },
-
   successBox: {
     backgroundColor: colors.accent,
     borderRadius: 16,
@@ -132,7 +159,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   text: { fontSize: 16, color: colors.textPrimary, fontWeight: "500" },
-
   cardSection: {
     backgroundColor: colors.surface,
     borderRadius: 16,
@@ -151,9 +177,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: "center",
   },
-
   primaryButton: {
-    backgroundColor: colors.warning, // ✅ first button color
+    backgroundColor: colors.warning,
     padding: 12,
     borderRadius: 12,
     marginBottom: 12,
@@ -166,7 +191,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   secondaryButton: {
-    backgroundColor: colors.primary, // ✅ second button color
+    backgroundColor: colors.primary,
     padding: 12,
     borderRadius: 12,
     marginBottom: 12,
@@ -178,7 +203,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-
   homeLink: {
     color: colors.info,
     fontSize: 16,
@@ -189,3 +213,4 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
 });
+
