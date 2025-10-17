@@ -5,8 +5,8 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ManageAppointmentScreen from '../screens/appointment/ManageAppointment';
 import AppointmentStackNavigator from './AppointmentStackNavigator';
-import HomeScreen from '../screen/appointment/HomeScreen';
-import AppointmentsListScreen from '../screen/appointment/ViewAppointmentsScreen';
+import HomeScreen from '../screens/appointment/HomeScreen';
+import AppointmentsListScreen from '../screens/appointment/ViewAppointmentsScreen';
 
 const Tab = createBottomTabNavigator();
 
