@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ManageAppointmentScreen from '../screen/appointment/ManageAppointment';
+import ManageAppointmentScreen from '../screens/appointment/ManageAppointment';
 import AppointmentStackNavigator from './AppointmentStackNavigator';
 
 const Tab = createBottomTabNavigator();

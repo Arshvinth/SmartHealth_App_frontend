@@ -1,15 +1,15 @@
 // navigation/AppointmentStackNavigator.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import ManageAppointmentScreen from '../screen/appointment/ManageAppointment';
-import CancelAppointment from '../screen/appointment/CancelAppointmentScreen';
-import ViewAppointments from '../screen/appointment/ViewAppointmentsScreen';
-import ScheduleAppointmentScreen from '../screen/appointment/ScheduleAppointmentScreen';
+import ManageAppointmentScreen from '../screens/appointment/ManageAppointment';
+import CancelAppointment from '../screens/appointment/CancelAppointmentScreen';
+import ViewAppointments from '../screens/appointment/ViewAppointmentsScreen';
+import ScheduleAppointmentScreen from '../screens/appointment/ScheduleAppointmentScreen';
 
 const Stack = createStackNavigator();
 
 const AppointmentStackNavigator = () => {
-    return (
+    return ( 
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen
                 name="ManageAppointment"
