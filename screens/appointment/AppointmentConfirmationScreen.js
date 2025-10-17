@@ -5,6 +5,7 @@ import { theme } from '../../assets/theme';
 import appointmentDataService from '../../services/api/appointmentDataService';
 import CalendarEventBuilder from '../../builders/CalenderEventBuilder';
 import calendarUtils from '../../utils/calendarUtils';
+import AlertServices from '../../services/AlertServices';
 
 const BookingConfirmationScreen = ({ route, navigation }) => {
     const { appointment } = route.params || {};
@@ -68,14 +69,14 @@ const BookingConfirmationScreen = ({ route, navigation }) => {
                 const message = type === 'reminder'
                     ? 'Reminder set successfully!'
                     : 'Appointment added to calendar successfully!';
-                AlertService.showSuccess('Success', message);
+                AlertServices.showSuccess('Success', message);
             }
         } catch (error) {
             console.error(`${type} error:`, error);
             const errorMessage = type === 'reminder'
                 ? 'Failed to set reminder. Please check app permissions.'
                 : 'Failed to add to calendar. Please check app permissions.';
-            AlertService.showError('Error', errorMessage);
+            AlertServices.showError('Error', errorMessage);
         }
     };
     const handleAddToCalendar = () => handleCalendarAction('appointment');

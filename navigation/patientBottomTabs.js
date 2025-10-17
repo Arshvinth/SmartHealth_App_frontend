@@ -5,6 +5,8 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ManageAppointmentScreen from '../screens/appointment/ManageAppointment';
 import AppointmentStackNavigator from './AppointmentStackNavigator';
+import HomeScreen from '../screen/appointment/HomeScreen';
+import AppointmentsListScreen from '../screen/appointment/ViewAppointmentsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -71,8 +73,8 @@ export default function BottomTabs() {
       }}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
-      <Tab.Screen name="Home" children={() => <DummyScreen title="Home" />} />
-      <Tab.Screen name="Records" children={() => <DummyScreen title="Records" />} />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Records" component={AppointmentsListScreen} />
       <Tab.Screen name="Appointments" component={AppointmentStackNavigator} />
       <Tab.Screen name="Profile" children={() => <DummyScreen title="Profile" />} />
     </Tab.Navigator>
