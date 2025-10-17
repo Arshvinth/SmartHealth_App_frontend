@@ -37,30 +37,6 @@ export default function App() {
 
   // Your original navigation structure remains untouched
   return (
-    // <NavigationContainer>
-    //   {/* <Stack.Navigator>
-
-    //     <Stack.Screen
-    //       name="loginScreen"
-    //       component={loginScreen}
-    //       options={{ headerShown: false }}
-    //     />
-    //     <Stack.Screen
-    //       name="staffBottomTabs"
-    //       component={staffBottomTabs}
-    //       options={{ headerShown: false }}
-    //     />
-    //     <Stack.Screen
-    //       name="PatientBottomTabs"
-    //       component={PatientBottomTabs}
-    //       options={{ headerShown: false }}
-    //     />
-    //     <AppNavigator />
-
-    //   </Stack.Navigator> */}
-     
-    // </NavigationContainer>
      <AppNavigator />
-    
   );
 }
