@@ -4,9 +4,6 @@ import * as Font from 'expo-font';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import { NavigationContainer } from '@react-navigation/native';
-// import PatientBottomTabs from './navigation/patientBottomTabs';
-// import staffBottomTabs from './navigation/staffBottomTabs';
-// import loginScreen from './screens/loginPortal/loginPage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();

@@ -1,62 +1,130 @@
 // src/screens/appointment/ScheduleAppointmentScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { useAppointmentFlow } from '../../hooks/useAppointmentFlow';
+import { useScheduleData } from '../../hooks/useScheduleData';
 import { AppointmentService } from '../../services/api/appointmentService';
-import Button from '../../components/common/Button';
-import { useAppointment } from '../../hooks/useAppointment';
+import DoctorSelection from '../../components/appointment/DoctorSelection';
+import HospitalSelection from '../../components/appointment/HospitalSelection';
+import ScheduleCard from '../../components/appointment/ScheduleCard';
+import PatientForm from '../../components/appointment/PatientForm';
+import ChatButton from '../../components/appointment/chatButton';
+import QuickAppointmentChat from '../../components/appointment/QuickAppointmentChat';
+import { theme } from '../../assets/theme';
 
-const ScheduleAppointmentScreen = ({ navigation, route }) => {
+const ScheduleAppointmentScreen = ({ navigation }) => {
     const appointmentService = new AppointmentService();
     const {
+        currentStep,
+        selectedDoctor,
+        selectedHospital,
+        selectedSchedule,
+        prevStep,
+        nextStep,
+        selectDoctor,
+        selectHospital,
+        selectSchedule,
+        resetFlow,
+        getStepTitle,
+        canProceedToNext
+    } = useAppointmentFlow();
+
+    const {
         doctors,
+        hospitals,
+        schedules,
         loading,
-        scheduleAppointment,
-        loadDoctors
-    } = useAppointment(appointmentService);
+        error,
+        loadDoctors,
+        loadDoctorHospitals,
+        loadSchedules,
+        clearHospitals,
+        clearSchedules
+    } = useScheduleData(appointmentService);
 
-    const [selectedHospital, setSelectedHospital] = useState('');
-    const [selectedDoctor, setSelectedDoctor] = useState('');
-    const [selectedTime, setSelectedTime] = useState('');
-    const [patientId, setPatientId] = useState('1'); // Get from auth context
-
-    const hospitals = [
-        { id: '1', name: 'General Hospital', sector: 'Public' },
-        { id: '2', name: 'City Medical Center', sector: 'Private' },
-    ];
-
-    const timeSlots = ['9:00 AM', '10:30 AM', '11:00 AM', '2:00 PM', '3:30 PM'];
+    const [showChat, setShowChat] = useState(false);
 
     useEffect(() => {
         loadDoctors();
     }, []);
 
-    const handleBookAppointment = async () => {
-        if (!selectedHospital || !selectedDoctor || !selectedTime) {
-            Alert.alert('Error', 'Please select hospital, doctor, and time slot');
-            return;
+    useEffect(() => {
+        if (selectedDoctor) {
+            loadDoctorHospitals(selectedDoctor._id);
+        } else {
+            clearHospitals();
         }
+    }, [selectedDoctor]);
 
+    useEffect(() => {
+        console.log('📅 Schedules data updated:', {
+            count: schedules.length,
+            data: schedules
+        });
+    }, [schedules]);
+
+    useEffect(() => {
+        console.log('🏥 Hospital changed:', selectedHospital?.id, selectedHospital?.name);
+
+        if (selectedDoctor && selectedDoctor._id && selectedHospital && selectedHospital.id) {
+            console.log('🔄 Loading schedules for:', {
+                doctorId: selectedDoctor._id,
+                hospitalId: selectedHospital.id
+            });
+            loadSchedules(selectedDoctor._id, selectedHospital.id);
+        } else {
+            console.log('🔄 Clearing schedules - missing doctor or hospital');
+            clearSchedules();
+        }
+    }, [selectedDoctor, selectedHospital]);
+
+    const handleConfirmAppointment = async (appointmentData) => {
         try {
-            const appointmentData = {
-                patientId,
-                doctorId: selectedDoctor,
-                hospitalId: selectedHospital,
-                scheduleId: Date.now().toString(),
-                charges: 50, // Default charge
-                date: new Date().toISOString(),
-                timeSlot: selectedTime,
+            const appointmentPayload = {
+                patientId: '68efe6401c0f65de24140471', // This should come from auth context
+                doctorId: appointmentData.doctor._id,
+                hospitalId: appointmentData.hospital.id,
+                scheduleId: appointmentData.schedule._id,
+                charges: appointmentData.hospital.totalCharge || 50,
+                patientInfo: appointmentData.patientInfo,
+                paymentMethod: appointmentData.paymentMethod
             };
 
-            const result = await scheduleAppointment(appointmentData);
+            console.log('📋 Appointment Payload:', appointmentPayload);
+
+            const result = await appointmentService.scheduleAppointment(appointmentPayload);
+
+            const appointmentResult = result;
+            console.log("result", appointmentResult);
+
+            const confirmationData = {
+                appointment: appointmentResult.appointment,
+                _id: appointmentResult._id || appointmentResult.id,
+                id: appointmentResult._id || appointmentResult.id,
+                hospital: selectedHospital?.name || 'Hospital',
+                doctor: selectedDoctor?.name || 'Doctor',
+                date: selectedSchedule?.scheduleDate || new Date().toLocaleDateString(),
+                time: selectedSchedule?.startTime || '9:00 AM',
+                charges: appointmentPayload.charges || 'Rs 1500',
+                ...result // Include any additional data from API
+            };
+
+            console.log('✅ Confirmation Data:', confirmationData);
 
             Alert.alert(
                 'Success',
-                `Appointment Scheduled Successfully!\nAppointment Number: ${result.appointmentNumber}`,
+                "Appointment scheduled successfully!",
                 [
                     {
                         text: 'OK',
-                        onPress: () => navigation.navigate('Dashboard'),
-                    },
+                        onPress: () => {
+                            resetFlow();
+                            // Navigate to confirmation screen with data
+                            navigation.navigate('BookingConfirmation', {
+                                appointment: confirmationData
+                            });
+                        }
+                    }
                 ]
             );
         } catch (error) {
@@ -64,95 +132,112 @@ const ScheduleAppointmentScreen = ({ navigation, route }) => {
         }
     };
 
+    const renderStepContent = () => {
+        switch (currentStep) {
+            case 1:
+                return (
+                    <DoctorSelection
+                        doctors={doctors}
+                        selectedDoctor={selectedDoctor}
+                        onSelectDoctor={selectDoctor}
+                        loading={loading}
+                    />
+                );
+            case 2:
+                return (
+                    <HospitalSelection
+                        hospitals={hospitals}
+                        selectedHospital={selectedHospital}
+                        onSelectHospital={selectHospital}
+                        loading={loading}
+                    />
+                );
+            case 3:
+                return (
+                    <View style={styles.stepContainer}>
+                        <Text style={styles.sectionTitle}>Available Time Slots</Text>
+                        {schedules.map((schedule) => (
+                            <ScheduleCard
+                                key={schedule._id}
+                                schedule={schedule}
+                                selectedSchedule={selectedSchedule}
+                                onSelectSchedule={selectSchedule}
+                            />
+                        ))}
+                    </View>
+                );
+            case 4:
+                return (
+                    <PatientForm
+                        onSubmit={handleConfirmAppointment}
+                        onBack={prevStep}
+                        appointmentData={{
+                            doctor: selectedDoctor,
+                            hospital: selectedHospital,
+                            schedule: selectedSchedule
+                        }}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.sectionTitle}>Select Hospital & Doctor</Text>
+            {/* Header */}
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Schedule Appointment</Text>
+                <Text style={styles.stepTitle}>{getStepTitle()}</Text>
+            </View>
 
-                {/* Hospital Selection */}
-                <Text style={styles.label}>Hospital</Text>
-                <View style={styles.optionsContainer}>
-                    {hospitals.map(hospital => (
-                        <TouchableOpacity
-                            key={hospital.id}
-                            style={[
-                                styles.option,
-                                selectedHospital === hospital.id && styles.selectedOption,
-                            ]}
-                            onPress={() => setSelectedHospital(hospital.id)}
-                        >
-                            <Text style={[
-                                styles.optionText,
-                                selectedHospital === hospital.id && styles.selectedOptionText,
-                            ]}>
-                                {hospital.name}
-                            </Text>
-                            <Text style={styles.optionSubtext}>{hospital.sector} Services</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+            {/* Content */}
+            <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+                {error && (
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                )}
 
-                {/* Doctor Selection */}
-                <Text style={styles.label}>Select Doctor</Text>
-                <View style={styles.optionsContainer}>
-                    {doctors.map(doctor => (
-                        <TouchableOpacity
-                            key={doctor.id}
-                            style={[
-                                styles.option,
-                                selectedDoctor === doctor.id && styles.selectedOption,
-                            ]}
-                            onPress={() => setSelectedDoctor(doctor.id)}
-                        >
-                            <Text style={[
-                                styles.optionText,
-                                selectedDoctor === doctor.id && styles.selectedOptionText,
-                            ]}>
-                                {doctor.name}
-                            </Text>
-                            <Text style={styles.optionSubtext}>{doctor.specialization}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-
-                {/* Time Slots */}
-                <Text style={styles.label}>Available Time Slots</Text>
-                <View style={styles.optionsContainer}>
-                    {timeSlots.map(time => (
-                        <TouchableOpacity
-                            key={time}
-                            style={[
-                                styles.option,
-                                selectedTime === time && styles.selectedOption,
-                            ]}
-                            onPress={() => setSelectedTime(time)}
-                        >
-                            <Text style={[
-                                styles.optionText,
-                                selectedTime === time && styles.selectedOptionText,
-                            ]}>
-                                {time}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                {renderStepContent()}
             </ScrollView>
 
-            <View style={styles.footer}>
-                <Button
-                    title="Back"
-                    variant="outline"
-                    onPress={() => navigation.goBack()}
-                    fullWidth
-                />
-                <Button
-                    title="Book Appointment"
-                    onPress={handleBookAppointment}
-                    disabled={!selectedHospital || !selectedDoctor || !selectedTime}
-                    loading={loading}
-                    fullWidth
-                />
-            </View>
+            {/* Navigation Buttons */}
+            {currentStep < 4 && (
+                <View style={styles.footer}>
+                    <TouchableOpacity
+                        style={[styles.button, styles.backButton]}
+                        onPress={prevStep}
+                        disabled={currentStep === 1}
+                    >
+                        <Text style={styles.buttonText}>Back</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.button, styles.nextButton, !canProceedToNext && styles.disabledButton]}
+                        onPress={nextStep}
+                        disabled={!canProceedToNext}
+                    >
+                        <Text style={styles.buttonText}>Next</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
+            {/* Chat Bot */}
+            <ChatButton onPress={() => setShowChat(true)} />
+
+            <QuickAppointmentChat
+                visible={showChat}
+                onClose={() => setShowChat(false)}
+                appointmentService={appointmentService}
+                onQuickAppointmentComplete={(data) => {
+                    // Auto-fill the form with quick appointment data
+                    selectDoctor(data.doctor);
+                    selectHospital(data.hospital);
+                    selectSchedule(data.schedule);
+                    setShowChat(false);
+                }}
+            />
         </View>
     );
 };
@@ -160,63 +245,81 @@ const ScheduleAppointmentScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: theme.colors.background,
+    },
+    header: {
+        backgroundColor: theme.colors.surface,
+        padding: theme.spacing.lg,
+        paddingTop: 60,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.border,
+    },
+    headerTitle: {
+        fontSize: theme.typography.h2.fontSize,
+        fontWeight: theme.typography.h2.fontWeight,
+        color: theme.colors.textPrimary,
+        textAlign: 'center',
+    },
+    stepTitle: {
+        fontSize: theme.typography.body.fontSize,
+        color: theme.colors.textSecondary,
+        textAlign: 'center',
+        marginTop: theme.spacing.xs,
+    },
+    content: {
+        flex: 1,
     },
     scrollContent: {
-        padding: 16,
+        padding: theme.spacing.lg,
+    },
+    stepContainer: {
+        marginBottom: theme.spacing.lg,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 24,
-        color: '#333',
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 12,
-        color: '#333',
-    },
-    optionsContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginBottom: 24,
-        gap: 8,
-    },
-    option: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderRadius: 8,
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        minWidth: '48%',
-    },
-    selectedOption: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF',
-    },
-    optionText: {
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#333',
-    },
-    selectedOptionText: {
-        color: '#fff',
-    },
-    optionSubtext: {
-        fontSize: 12,
-        color: '#666',
-        marginTop: 2,
+        fontSize: theme.typography.h2.fontSize,
+        fontWeight: theme.typography.h2.fontWeight,
+        marginBottom: theme.spacing.md,
+        color: theme.colors.textPrimary,
     },
     footer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 16,
+        padding: theme.spacing.lg,
         borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
-        backgroundColor: '#fff',
-        gap: 12,
+        borderTopColor: theme.colors.border,
+        backgroundColor: theme.colors.surface,
+        gap: theme.spacing.sm,
+    },
+    button: {
+        flex: 1,
+        padding: theme.spacing.md,
+        borderRadius: theme.radius.sm,
+        alignItems: 'center',
+    },
+    backButton: {
+        backgroundColor: theme.colors.textSecondary,
+    },
+    nextButton: {
+        backgroundColor: theme.colors.primary,
+    },
+    disabledButton: {
+        backgroundColor: theme.colors.border,
+    },
+    buttonText: {
+        color: theme.colors.surface,
+        fontSize: theme.typography.body.fontSize,
+        fontWeight: '600',
+    },
+    errorContainer: {
+        backgroundColor: theme.colors.error + '20', // Add transparency
+        padding: theme.spacing.sm,
+        borderRadius: theme.radius.sm,
+        marginBottom: theme.spacing.md,
+        borderLeftWidth: 4,
+        borderLeftColor: theme.colors.error,
+    },
+    errorText: {
+        color: theme.colors.error,
+        fontSize: theme.typography.small.fontSize,
     },
 });
 

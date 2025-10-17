@@ -2,9 +2,14 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import ManageAppointmentScreen from '../screens/appointment/ManageAppointment';
+
 import CancelAppointment from '../screens/appointment/CancelAppointmentScreen';
 import ViewAppointments from '../screens/appointment/ViewAppointmentsScreen';
 import ScheduleAppointmentScreen from '../screens/appointment/ScheduleAppointmentScreen';
+import AppointmentConfirmationScreen from '../screens/appointment/AppointmentConfirmationScreen';
+import BookingConfirmationScreen from '../screens/appointment/AppointmentConfirmationScreen';
+import CancelAppointmentScreen from '../screens/appointment/CancelAppointmentScreen';
+import AppointmentsListScreen from '../screens/appointment/ViewAppointmentsScreen';
 
 const Stack = createStackNavigator();
 
@@ -21,11 +26,15 @@ const AppointmentStackNavigator = () => {
             />
             <Stack.Screen
                 name="ViewAppointments"
-                component={ViewAppointments}
+                component={AppointmentsListScreen}
             />
             <Stack.Screen
                 name="CancelAppointment"
-                component={CancelAppointment}
+                component={CancelAppointmentScreen}
+            />
+            <Stack.Screen
+                name="BookingConfirmation"
+                component={BookingConfirmationScreen}
             />
         </Stack.Navigator>
     );

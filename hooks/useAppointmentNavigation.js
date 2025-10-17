@@ -14,10 +14,14 @@ export const useAppointmentNavigation = () => {
     const navigateToCancel = () => {
         navigation.navigate('CancelAppointment');
     };
+    const navigateToConfirm = () => {
+        navigation.navigate('BookingConfirmation');
+    };
 
     return {
         navigateToSchedule,
         navigateToView,
         navigateToCancel,
+        navigateToConfirm
     };
 };
