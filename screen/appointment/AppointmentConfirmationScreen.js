@@ -2,27 +2,86 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { theme } from '../../assets/theme';
+import appointmentDataService from '../../services/api/appointmentDataService';
+import CalendarEventBuilder from '../../builders/CalenderEventBuilder';
+import calendarUtils from '../../utils/calendarUtils';
 
 const BookingConfirmationScreen = ({ route, navigation }) => {
     const { appointment } = route.params || {};
 
     // Mock data structure in case appointment data is not passed
-    const appointmentData = appointment || {
-        id: '#APT-78945',
-        hospital: 'General Hospital Colombo',
-        doctor: 'Dr. Silva',
-        date: 'Nov 18, 2025',
-        time: '9:00 AM',
-        charges: 'Rs.50'
-    };
+    const number = appointment?.appointment.appointmentNumber;
+    const appointmentId = appointment?.appointment._id;
 
-    const handleAddToCalendar = () => {
-        Alert.alert('Success', 'Added to calendar successfully!');
-    };
+    const appointmentData = appointment || {}
 
-    const handleSetReminder = () => {
-        Alert.alert('Success', 'Reminder set successfully!');
+    console.log("appoint", appointmentData);
+
+    const hospital = appointmentData.hospital || 'Not specified';
+    const doctor = appointmentData.doctor || 'Not specified';
+    const date = appointmentData.date || 'Not specified';
+    const time = appointmentData.time || 'Not specified';
+    const charges = appointmentData.charges || 'Not specified';
+
+    const handleCalendarAction = async (type = 'appointment') => {
+        try {
+
+            const formattedDate = calendarUtils.formatDateForCalendar(date);
+            const formatTime = calendarUtils.formatTimeForCalendar(date);
+            const calendarData = {
+                number: number,
+                hospital: hospital,
+                doctor: doctor,
+                date: formattedDate,
+                time: formatTime,
+                charges: charges
+            }
+            console.log('📅 Calendar data:', calendarData);
+
+            // Validate the data before proceeding
+            appointmentDataService.validateAppointmentData(calendarData);
+
+            const eventBuilder = new CalendarEventBuilder();
+
+            if (type === 'reminder') {
+                eventBuilder
+                    .setTitle(`Reminder: Appointment with ${doctor}`)
+                    .setLocation(hospital)
+                    .setNotes(`Don't forget your appointment!`)
+                    .setStartDate(date, time, -24 * 60) // 24 hours before
+                    .setEndDate(date, time, -24 * 60 + 30) // 30 min event
+                    .addAlarm(60);
+            } else {
+                eventBuilder
+                    .setTitle(`Doctor Appointment - ${doctor}`)
+                    .setLocation(hospital)
+                    .setNotes(`Appointment with ${doctor} at ${hospital}. Appointment ID: ${number}`)
+                    .setStartDate(date, time)
+                    .setEndDate(date, time, 60) // 1 hour duration
+                    .addAlarm(60);
+            }
+
+            const eventConfig = eventBuilder.build();
+            const result = await calendarUtils.addToCalendar(eventConfig);
+
+            if (result) {
+                const message = type === 'reminder'
+                    ? 'Reminder set successfully!'
+                    : 'Appointment added to calendar successfully!';
+                AlertService.showSuccess('Success', message);
+            }
+        } catch (error) {
+            console.error(`${type} error:`, error);
+            const errorMessage = type === 'reminder'
+                ? 'Failed to set reminder. Please check app permissions.'
+                : 'Failed to add to calendar. Please check app permissions.';
+            AlertService.showError('Error', errorMessage);
+        }
     };
+    const handleAddToCalendar = () => handleCalendarAction('appointment');
+
+
+    const handleSetReminder = () => handleCalendarAction('reminder');
 
     const handleCancelAppointment = () => {
         Alert.alert(
@@ -32,7 +91,26 @@ const BookingConfirmationScreen = ({ route, navigation }) => {
                 { text: 'No', style: 'cancel' },
                 {
                     text: 'Yes',
-                    onPress: () => navigation.goBack()
+                    onPress: () => {
+                        // Navigate to CancelAppointment screen with the appointment ID
+                        console.log('🎯 Passing appointment to cancel:', {
+                            id: appointmentId,
+                            number: number,
+                            fullData: appointmentData
+                        });
+
+                        navigation.navigate('CancelAppointment', {
+                            appointment: {
+                                _id: appointmentId,
+                                appointmentNumber: number,
+                                hospital: appointmentData.hospital,
+                                doctor: appointmentData.doctor,
+                                date: appointmentData.date,
+                                time: appointmentData.time,
+                                charges: appointmentData.charges
+                            }
+                        });
+                    }
                 }
             ]
         );
@@ -52,8 +130,8 @@ const BookingConfirmationScreen = ({ route, navigation }) => {
                     <Text style={styles.sectionTitle}>Appointment Details</Text>
 
                     <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Appointment ID:</Text>
-                        <Text style={styles.detailValue}>{appointmentData.appointmentNumber}</Text>
+                        <Text style={styles.detailLabel}>Appointment Number:</Text>
+                        <Text style={styles.detailValue}>{number}</Text>
                     </View>
 
                     <View style={styles.detailRow}>
@@ -114,7 +192,7 @@ const BookingConfirmationScreen = ({ route, navigation }) => {
 
 
             </ScrollView>
-        </View>
+        </View >
     );
 };
 

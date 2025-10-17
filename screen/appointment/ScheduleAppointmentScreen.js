@@ -94,14 +94,22 @@ const ScheduleAppointmentScreen = ({ navigation }) => {
 
             const result = await appointmentService.scheduleAppointment(appointmentPayload);
 
+            const appointmentResult = result;
+            console.log("result", appointmentResult);
+
             const confirmationData = {
+                appointment: appointmentResult.appointment,
+                _id: appointmentResult._id || appointmentResult.id,
+                id: appointmentResult._id || appointmentResult.id,
                 hospital: selectedHospital?.name || 'Hospital',
                 doctor: selectedDoctor?.name || 'Doctor',
                 date: selectedSchedule?.scheduleDate || new Date().toLocaleDateString(),
                 time: selectedSchedule?.startTime || '9:00 AM',
-                charges: `$Rs.{appointmentPayload.charges}`,
+                charges: appointmentPayload.charges || 'Rs 1500',
                 ...result // Include any additional data from API
             };
+
+            console.log('✅ Confirmation Data:', confirmationData);
 
             Alert.alert(
                 'Success',

@@ -7,7 +7,7 @@ export class AppointmentService {
             console.log('🚀 Sending appointment request to /api/appointment/book:', appointmentData);
             const response = await apiClient.post('/api/appointment/book', appointmentData);
             console.log('✅ Appointment response:', response);
-            return response.data; // Make sure to return response.data
+            return response; // Make sure to return response.data
         } catch (error) {
             console.error('❌ API Error:', error);
 
@@ -30,9 +30,23 @@ export class AppointmentService {
         return apiClient.put(`/api/appointment/cancel/${appointmentId}`);
     }
 
+    // In your AppointmentService - update getUserAppointments method
     async getUserAppointments(userId) {
-        const response = await apiClient.get(`/api/appointment/getAppointment/${userId}`);
-        return response.appointment || [];
+        try {
+            console.log('🔄 [Frontend] Fetching appointments for user:', userId);
+            const response = await apiClient.get(`/api/appointment/getAppointment/${userId}`);
+            console.log('✅ [Frontend] Full API response:', response);
+            console.log('📊 [Frontend] Appointments count:', response.appointments?.length || 0);
+
+            if (response.appointments && response.appointments.length > 0) {
+                console.log('🔍 [Frontend] First appointment sample:', response.appointments[0]);
+            }
+
+            return response.appointments || [];
+        } catch (error) {
+            console.error('❌ [Frontend] Failed to fetch appointments:', error);
+            return [];
+        }
     }
 
     async getDoctors() {

@@ -39,7 +39,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
 
-        <Stack.Screen
+        {/*<Stack.Screen
           name="loginScreen"
           component={loginScreen}
           options={{ headerShown: false }}
@@ -48,7 +48,7 @@ export default function App() {
           name="staffBottomTabs"
           component={staffBottomTabs}
           options={{ headerShown: false }}
-        />
+        />*/}
         <Stack.Screen
           name="PatientBottomTabs"
           component={PatientBottomTabs}
