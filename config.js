@@ -1,7 +1,7 @@
 // config.js
 //const LOCAL_IP = "192.168.1.116"; // your PC IP on LAN
 const PORT = 8081;
-const LOCAL_IP = "192.168.29.127";
+const LOCAL_IP = "192.168.1.30";
 
 
 
