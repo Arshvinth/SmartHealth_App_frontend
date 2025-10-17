@@ -43,11 +43,11 @@ export default function App() {
           component={staffBottomTabs}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="PatientBottomTabs"
           component={PatientBottomTabs}
           options={{ headerShown: false }}
-        />
+        /> */}
         
       </Stack.Navigator>
     </NavigationContainer>
