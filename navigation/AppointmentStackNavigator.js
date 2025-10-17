@@ -5,6 +5,8 @@ import ManageAppointmentScreen from '../screen/appointment/ManageAppointment';
 import CancelAppointment from '../screen/appointment/CancelAppointmentScreen';
 import ViewAppointments from '../screen/appointment/ViewAppointmentsScreen';
 import ScheduleAppointmentScreen from '../screen/appointment/ScheduleAppointmentScreen';
+import AppointmentConfirmationScreen from '../screen/appointment/AppointmentConfirmationScreen';
+import BookingConfirmationScreen from '../screen/appointment/AppointmentConfirmationScreen';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,10 @@ const AppointmentStackNavigator = () => {
             <Stack.Screen
                 name="CancelAppointment"
                 component={CancelAppointment}
+            />
+            <Stack.Screen
+                name="BookingConfirmation"
+                component={BookingConfirmationScreen}
             />
         </Stack.Navigator>
     );
