@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingTop: 30, // ⬅️ added space from top edge
-    paddingBottom: 30, // ⬅️ added space from bottom edge
+    paddingTop: 30, 
+    paddingBottom: 30, 
   },
   scrollContainer: {
     flex: 1,

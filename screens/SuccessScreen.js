@@ -21,7 +21,7 @@ export default function SuccessScreen({ route, navigation }) {
 
   const formattedDob = patient.dob?.split("T")[0] || patient.dob;
 
-  // ✅ Full Patient Data QR
+  // Full Patient Data QR
   const qrData = JSON.stringify({
     title: "Patient Details",
     patientId: patient.patientId,
@@ -35,10 +35,10 @@ export default function SuccessScreen({ route, navigation }) {
     medicalHistory: patient.medicalHistory,
   });
 
-  // ✅ ID-only QR
+  // ID-only QR
   const qrDataID = patient.card.qr;
 
-  // ✅ Generate and Share PDF
+  // Generate and Share PDF
   const handleSharePDF = async () => {
     try {
       const uri = await generatePatientCard(patient, formattedDob);
@@ -50,7 +50,7 @@ export default function SuccessScreen({ route, navigation }) {
     }
   };
 
-  // ✅ Share QR Code (ViewShot)
+  // Share QR Code (ViewShot)
   const handleShareQRCode = async () => {
     try {
       const uri = await viewShotRef.current.capture();
@@ -65,7 +65,7 @@ export default function SuccessScreen({ route, navigation }) {
     }
   };
 
-  // ✅ Navigate to Medical Record Card page
+  // Navigate to Medical Record Card page
   const handleOpenMedicalRecordCard = () => {
     navigation.navigate("MedicalCard", { qrDataID });
   };
@@ -80,7 +80,7 @@ export default function SuccessScreen({ route, navigation }) {
       </View>
 
       <View style={styles.content}>
-        {/* ✅ Success Message */}
+        {/* Success Message */}
         <View style={styles.successBox}>
           <Image
             source={require("../assets/success.png")}
@@ -90,7 +90,7 @@ export default function SuccessScreen({ route, navigation }) {
           <Text style={styles.text}>Patient ID: {patient.patientId}</Text>
         </View>
 
-        {/* ✅ Digital Health Card */}
+        {/* Digital Health Card */}
         <View style={styles.cardSection}>
           <Text style={styles.sectionTitle}>Digital Health Card</Text>
           <DigitalHealthCard
@@ -101,7 +101,7 @@ export default function SuccessScreen({ route, navigation }) {
           />
         </View>
 
-        {/* ✅ Buttons */}
+        {/* Buttons */}
         <TouchableOpacity style={styles.primaryButton} onPress={handleSharePDF}>
           <Text style={styles.primaryButtonText}>
             📤 Share Patient Details as PDF

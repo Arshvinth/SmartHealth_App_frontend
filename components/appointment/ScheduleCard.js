@@ -15,7 +15,7 @@ const ScheduleCard = ({ schedule, selectedSchedule, onSelectSchedule }) => {
     };
 
     const formatTime = (timeString) => {
-        return timeString; // Assuming time is already in proper format
+        return timeString; 
     };
 
     return (

@@ -10,7 +10,7 @@ const PaymentConfirmation = ({ appointment, onPaymentConfirm }) => {
                 paymentMethod: paymentMethod
             };
 
-            // Call your API to create payment
+            
             const response = await fetch('http://your-api/payments/create', {
                 method: 'POST',
                 headers: {

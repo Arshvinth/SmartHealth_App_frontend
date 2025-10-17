@@ -24,7 +24,7 @@ export default function ReviewSubmitScreen({ route, navigation }) {
         patientId: patient.patientId, // required
         fullName: patient.fullName, // required
         nicOrPassport: patient.nicOrPassport, // required
-        dob: new Date(patient.dob), // ensure Date type
+        dob: new Date(patient.dob), 
         sex: patient.sex,
         address: patient.address,
         phone: patient.phone,
@@ -32,7 +32,7 @@ export default function ReviewSubmitScreen({ route, navigation }) {
         emergencyContact: patient.emergencyContact,
         medicalHistory: history,
         registrationDate: new Date(),
-        card: { status: "Active" }, // must match enum
+        card: { status: "Active" }, 
       };
 
       const res = await registerPatient(payload);
@@ -55,7 +55,7 @@ export default function ReviewSubmitScreen({ route, navigation }) {
         ]
       );
     } catch (err) {
-      console.log(err.response?.data || err.message); // debug
+      console.log(err.response?.data || err.message); 
       Alert.alert(
         "Registration Failed",
         err.response?.data?.message ||
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 20,
     marginBottom: 100,
-    gap: 16, // optional spacing between buttons
+    gap: 16, 
   },
   button: {
     flex: 1,

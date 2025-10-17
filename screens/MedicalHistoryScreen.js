@@ -73,7 +73,7 @@ export default function MedicalHistoryScreen({ route, navigation }) {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0} // adjust as needed
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0} 
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
