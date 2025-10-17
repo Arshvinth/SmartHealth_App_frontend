@@ -21,18 +21,20 @@ export default function SuccessScreen({ route, navigation }) {
 
   const formattedDob = patient.dob?.split("T")[0] || patient.dob;
 
-  const qrData = JSON.stringify({
-    title: "Patient Details",
-    patientId: patient.patientId,
-    fullName: patient.fullName,
-    dob: formattedDob,
-    sex: patient.sex,
-    phone: patient.phone,
-    email: patient.email,
-    address: patient.address,
-    emergencyContact: patient.emergencyContact,
-    medicalHistory: patient.medicalHistory,
-  });
+  // const qrData = JSON.stringify({
+  //   title: "Patient Details",
+  //   patientId: patient.patientId,
+  //   fullName: patient.fullName,
+  //   dob: formattedDob,
+  //   sex: patient.sex,
+  //   phone: patient.phone,
+  //   email: patient.email,
+  //   address: patient.address,
+  //   emergencyContact: patient.emergencyContact,
+  //   medicalHistory: patient.medicalHistory
+  // });
+
+  const qrData = patient.card.qr;
 
   // ✅ Generate and Share PDF
   const handleSharePDF = async () => {
